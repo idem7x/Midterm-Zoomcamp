@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Credit Prediction Form</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function sendRequest() {
+            var formData = {
+                // Collect form data
+                "no_of_adults": parseInt(document.getElementById("no_of_adults").value, 10),
+                "no_of_children": parseInt(document.getElementById("no_of_children").value, 10),
+                "no_of_weekend_nights": parseInt(document.getElementById("no_of_weekend_nights").value, 10),
+                "no_of_week_nights": parseInt(document.getElementById("no_of_week_nights").value, 10),
+                "type_of_meal_plan": document.getElementById("type_of_meal_plan").value,
+                "required_car_parking_space": parseInt(document.getElementById("required_car_parking_space").value, 10),
+                "room_type_reserved": document.getElementById("room_type_reserved").value,
+                "lead_time": parseInt(document.getElementById("lead_time").value, 10),
+                "arrival_year": parseInt(document.getElementById("arrival_year").value, 10),
+                "arrival_month": parseInt(document.getElementById("arrival_month").value, 10),
+                "arrival_date": parseInt(document.getElementById("arrival_date").value, 10),
+                "market_segment_type": document.getElementById("market_segment_type").value,
+                "repeated_guest": parseInt(document.getElementById("repeated_guest").value, 10),
+                "no_of_previous_cancellations": parseInt(document.getElementById("no_of_previous_cancellations").value, 10),
+                "no_of_previous_bookings_not_canceled": parseInt(document.getElementById("no_of_previous_bookings_not_canceled").value, 10),
+                "avg_price_per_room": parseInt(document.getElementById("avg_price_per_room").value, 10),
+                "no_of_special_requests": parseInt(document.getElementById("no_of_special_requests").value, 10)
+            };
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    var result = (data.cancel * 100).toFixed(2)
+                    // Display the response in the div element
+                    document.getElementById('response').innerHTML = 'Chance of cancellation is : ' + result + '%';
+                });
+        }
+    </script>
+</head>
+<body>
+<h1>Enter Client Information for Credit Prediction</h1>
+<form action="/predict" method="post">
+    <label for="no_of_adults">Number of Adults:</label>
+    <select name="no_of_adults" id="no_of_adults">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+    </select>
+    <br>
+
+    <label for="no_of_children">Number of Children:</label>
+    <select name="no_of_children" id="no_of_children">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+    </select>
+    <br>
+
+    <label for="no_of_weekend_nights">Number of Weekend Nights:</label>
+    <select name="no_of_weekend_nights" id="no_of_weekend_nights">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+    </select>
+    <br>
+
+    <label for="no_of_week_nights">Number of Week Nights:</label>
+    <input type="number" name="no_of_week_nights" id="no_of_week_nights" min="0" max="30">
+    <br>
+
+    <label for="type_of_meal_plan">Type of Meal Plan:</label>
+    <select name="type_of_meal_plan" id="type_of_meal_plan">
+        <option value="meal_plan_1">Meal Plan 1</option>
+        <option value="meal_plan_2">Meal Plan 2</option>
+        <option value="meal_plan_3">Meal Plan 3</option>
+        <option value="not_selected">Not Selected</option>
+    </select>
+    <br>
+
+    <label for="required_car_parking_space">Required Car Parking Space:</label>
+    <select name="required_car_parking_space" id="required_car_parking_space">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+    </select>
+    <br>
+
+    <label for="room_type_reserved">Room Type Reserved:</label>
+    <select name="room_type_reserved" id="room_type_reserved">
+        <option value="room_type_1">Room Type 1</option>
+        <option value="room_type_2">Room Type 2</option>
+        <option value="room_type_3">Room Type 3</option>
+        <option value="room_type_4">Room Type 4</option>
+        <option value="room_type_5">Room Type 5</option>
+        <option value="room_type_6">Room Type 6</option>
+        <option value="room_type_7">Room Type 7</option>
+    </select>
+    <br>
+
+    <label for="lead_time">Lead Time:</label>
+    <input type="number" name="lead_time" id="lead_time" min="0" max="365">
+    <br>
+
+    <label for="arrival_select">Arrival Year:</label>
+    <select name="arrival_select" id="arrival_select">
+        <option value="0">2017</option>
+        <option value="1">2018</option>
+    </select>
+    <input type="hidden" name="arrival_year" id="arrival_year">
+
+    <script>
+        const selectElement = document.getElementById('arrival_select');
+        const inputElement = document.getElementById('arrival_year');
+
+        selectElement.addEventListener('change', function () {
+            inputElement.value = selectElement.value;
+        });
+    </script>
+
+    <label for="arrival_month">Arrival Month:</label>
+    <input type="number" name="arrival_month" id="arrival_month" min="1" max="12">
+    <br>
+
+    <label for="arrival_date">Arrival Date:</label>
+    <input type="number" name="arrival_date" id="arrival_date" min="1" max="31">
+    <br>
+
+    <label for="market_segment_type">Market Segment Type:</label>
+    <select name="market_segment_type" id="market_segment_type">
+        <option value="aviation">Aviation</option>
+        <option value="complementary">Complementary</option>
+        <option value="corporate">Corporate</option>
+        <option value="offline">Offline</option>
+        <option value="online">Online</option>
+    </select>
+    <br>
+
+    <label for="repeated_guest">Repeated Guest:</label>
+    <select name="repeated_guest" id="repeated_guest">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+    </select>
+    <br>
+
+    <label for="no_of_previous_cancellations">Number of Previous Cancellations:</label>
+    <input type="number" name="no_of_previous_cancellations" id="no_of_previous_cancellations" min="0" max="20">
+    <br>
+
+    <label for="no_of_previous_bookings_not_canceled">Number of Previous Bookings Not Canceled:</label>
+    <input type="number" name="no_of_previous_bookings_not_canceled" id="no_of_previous_bookings_not_canceled" min="0"
+           max="100">
+    <br>
+
+    <label for="avg_price_per_room">Average Price per Room:</label>
+    <input type="number" name="avg_price_per_room" id="avg_price_per_room">
+    <br>
+
+    <label for="no_of_special_requests">Number of Special Requests:</label>
+    <input type="number" name="no_of_special_requests" id="no_of_special_requests" min="0" max="5">
+    <br>
+
+    <input type="button" value="Send" onclick="sendRequest()">
+</form>
+
+<div id="response"></div>
+</body>
+</html>

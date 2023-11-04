@@ -46,7 +46,7 @@ bad_client = {
 "no_of_special_requests": 0
 }
 
-X = dv.transform(client)
+X = dv.transform(bad_client)
 print(X.toarray())
 result = model.predict(X)[0]
 # rounded_result = round(result, 3)

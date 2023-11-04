@@ -3,7 +3,7 @@ FROM svizor/zoomcamp-model:3.10.12-slim
 RUN pip install pipenv
 
 WORKDIR app/
-COPY ["Pipfile", "Pipfile.lock", "dv.bin", "model1.bin", "webservice.py", "./"]
+COPY ["Pipfile", "Pipfile.lock", "bin/model-randomforest.pkl", "bin/dv-randomforest.pkl", "server/webservice.py", "server/predict.html", "./"]
 
 RUN pipenv install --system --deploy
 
