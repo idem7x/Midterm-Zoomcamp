@@ -5,15 +5,19 @@ from flask import request
 from flask import jsonify
 from flask import render_template
 
-with open('../bin/model-randomforest.pkl', 'rb') as f_model:
+with open('./bin/model-randomforest.pkl', 'rb') as f_model:
     model = pickle.load(f_model)
 
-with open('../bin/dv-randomforest.pkl', 'rb') as f_dv:
+with open('./bin/dv-randomforest.pkl', 'rb') as f_dv:
     dv = pickle.load(f_dv)
 
-app = Flask('credit', template_folder='templates')
-app.static_url_path = '/static'
-app.static_folder = 'static'
+with open('./bin/model-logistic.bin', 'rb') as f_model:
+    modell = pickle.load(f_model)
+
+with open('./bin/dv-logistic.bin', 'rb') as f_dv:
+    dvl = pickle.load(f_dv)
+
+app = Flask('credit', template_folder='server/templates')
 
 @app.route('/')
 def show_form():
@@ -28,6 +32,19 @@ def predict():
 
     result = {
        'cancel': float(y_pred)
+    }
+
+    return jsonify(result)
+
+@app.route('/proba', methods=["POST"])
+def proba():
+    client = request.get_json()
+    X = dvl.transform([client])
+    print(X)
+    result = modell.predict_proba(X)[0, 1]
+
+    result = {
+       'cancel': float(result)
     }
 
     return jsonify(result)

@@ -2,7 +2,73 @@
 <html>
 <head>
     <title>Credit Prediction Form</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <!--    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">-->
+    <style>
+        /* Apply a reset to remove default browser styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Set a background color and font family for the entire page */
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Center the form and add some padding */
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Style form elements and labels */
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        /* Style the "Send" button */
+        input[type="button"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff5a5f;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="button"]:hover {
+            background-color: #ff4247;
+        }
+
+        /* Style the response div */
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+    </style>
     <script>
         function sendRequest() {
             var formData = {
@@ -35,9 +101,47 @@
             })
                 .then(response => response.json())
                 .then(data => {
+                    var result = data.cancel === 1 ? "Yes" : "No";
+                    // Display the response in the div element
+                    document.getElementById('response').innerHTML = 'Will user cancel booking? ' + result + '!';
+                });
+        }
+    </script>
+    <script>
+        function sendProba() {
+            var formData = {
+                // Collect form data
+                "no_of_adults": parseInt(document.getElementById("no_of_adults").value, 10),
+                "no_of_children": parseInt(document.getElementById("no_of_children").value, 10),
+                "no_of_weekend_nights": parseInt(document.getElementById("no_of_weekend_nights").value, 10),
+                "no_of_week_nights": parseInt(document.getElementById("no_of_week_nights").value, 10),
+                "type_of_meal_plan": document.getElementById("type_of_meal_plan").value,
+                "required_car_parking_space": parseInt(document.getElementById("required_car_parking_space").value, 10),
+                "room_type_reserved": document.getElementById("room_type_reserved").value,
+                "lead_time": parseInt(document.getElementById("lead_time").value, 10),
+                "arrival_year": parseInt(document.getElementById("arrival_year").value, 10),
+                "arrival_month": parseInt(document.getElementById("arrival_month").value, 10),
+                "arrival_date": parseInt(document.getElementById("arrival_date").value, 10),
+                "market_segment_type": document.getElementById("market_segment_type").value,
+                "repeated_guest": parseInt(document.getElementById("repeated_guest").value, 10),
+                "no_of_previous_cancellations": parseInt(document.getElementById("no_of_previous_cancellations").value, 10),
+                "no_of_previous_bookings_not_canceled": parseInt(document.getElementById("no_of_previous_bookings_not_canceled").value, 10),
+                "avg_price_per_room": parseInt(document.getElementById("avg_price_per_room").value, 10),
+                "no_of_special_requests": parseInt(document.getElementById("no_of_special_requests").value, 10)
+            };
+
+            fetch('/proba', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+                .then(response => response.json())
+                .then(data => {
                     var result = (data.cancel * 100).toFixed(2)
                     // Display the response in the div element
-                    document.getElementById('response').innerHTML = 'Chance of cancellation is : ' + result + '%';
+                    document.getElementById('response').innerHTML = 'Probability of cancellation is : ' + result + '%';
                 });
         }
     </script>
@@ -79,7 +183,7 @@
     <br>
 
     <label for="no_of_week_nights">Number of Week Nights:</label>
-    <input type="number" name="no_of_week_nights" id="no_of_week_nights" min="0" max="30">
+    <input type="number" name="no_of_week_nights" id="no_of_week_nights" min="0" max="30" value="0">
     <br>
 
     <label for="type_of_meal_plan">Type of Meal Plan:</label>
@@ -111,31 +215,21 @@
     <br>
 
     <label for="lead_time">Lead Time:</label>
-    <input type="number" name="lead_time" id="lead_time" min="0" max="365">
+    <input type="number" name="lead_time" id="lead_time" min="0" max="365" value="0">
     <br>
 
-    <label for="arrival_select">Arrival Year:</label>
-    <select name="arrival_select" id="arrival_select">
-        <option value="0">2017</option>
+    <label for="arrival_year">Arrival Year:</label>
+    <select name="arrival_year" id="arrival_year">
+        <option value="0" selected>2017</option>
         <option value="1">2018</option>
     </select>
-    <input type="hidden" name="arrival_year" id="arrival_year">
-
-    <script>
-        const selectElement = document.getElementById('arrival_select');
-        const inputElement = document.getElementById('arrival_year');
-
-        selectElement.addEventListener('change', function () {
-            inputElement.value = selectElement.value;
-        });
-    </script>
 
     <label for="arrival_month">Arrival Month:</label>
-    <input type="number" name="arrival_month" id="arrival_month" min="1" max="12">
+    <input type="number" name="arrival_month" id="arrival_month" min="1" max="12" value="1">
     <br>
 
     <label for="arrival_date">Arrival Date:</label>
-    <input type="number" name="arrival_date" id="arrival_date" min="1" max="31">
+    <input type="number" name="arrival_date" id="arrival_date" min="1" max="31" value="1">
     <br>
 
     <label for="market_segment_type">Market Segment Type:</label>
@@ -156,23 +250,25 @@
     <br>
 
     <label for="no_of_previous_cancellations">Number of Previous Cancellations:</label>
-    <input type="number" name="no_of_previous_cancellations" id="no_of_previous_cancellations" min="0" max="20">
+    <input type="number" name="no_of_previous_cancellations" id="no_of_previous_cancellations" min="0" max="20"
+           value="0">
     <br>
 
     <label for="no_of_previous_bookings_not_canceled">Number of Previous Bookings Not Canceled:</label>
     <input type="number" name="no_of_previous_bookings_not_canceled" id="no_of_previous_bookings_not_canceled" min="0"
-           max="100">
+           max="100" value="0">
     <br>
 
     <label for="avg_price_per_room">Average Price per Room:</label>
-    <input type="number" name="avg_price_per_room" id="avg_price_per_room">
+    <input type="number" name="avg_price_per_room" id="avg_price_per_room" value="60">
     <br>
 
     <label for="no_of_special_requests">Number of Special Requests:</label>
-    <input type="number" name="no_of_special_requests" id="no_of_special_requests" min="0" max="5">
+    <input type="number" name="no_of_special_requests" id="no_of_special_requests" min="0" max="5" value="0">
     <br>
 
-    <input type="button" value="Send" onclick="sendRequest()">
+    <input type="button" value="I want concrete result" onclick="sendRequest()">
+    <input type="button" value="I want probability of cancellation" onclick="sendProba()">
 </form>
 
 <div id="response"></div>
