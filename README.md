@@ -6,6 +6,8 @@ The online hotel reservation channels have dramatically changed booking possibil
 
 Model will help to predict if the customer is going to honor the reservation or cancel it.
 
+Used dataset - https://www.kaggle.com/datasets/ahsan81/hotel-reservations-classification-dataset.
+
 ## Instructions on how to run the project
 
 
